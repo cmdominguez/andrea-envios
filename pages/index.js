@@ -1,8 +1,31 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import React from "react";
+import styles from "../styles/Home.module.css";
+import {
+  Badge,
+  Box,
+  Button,
+  Center,
+  HStack,
+  Input,
+  Tag,
+} from "@chakra-ui/react";
+
+const url = "https://apidestinatarios.andreani.com/api/envios/";
 
 export default function Home() {
+  const [trackingNumber, setTrackingNumber] = React.useState("");
+  const [trazas, setTrazas] = React.useState([]);
+  const getShippingStatusTrace = React.useCallback(async () => {
+    const response = await fetch(`${url}${trackingNumber}/trazas`);
+    if (response.ok) {
+      const data = await response.json();
+      setTrazas(data);
+      console.log(data);
+    }
+  }, [trackingNumber]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,58 +35,58 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        <HStack mb={4}>
+          <Center w="400px" h="40px" color="white">
+            <Input
+              placeholder="Numero de tracking"
+              onChange={(e) => {
+                console.log(e.target.value);
+                setTrackingNumber(e.target.value);
+              }}
+            />
+          </Center>
+          <Center w="100px" h="40px" color="white">
+            <Button colorScheme="blue" onClick={getShippingStatusTrace} disabled={!trackingNumber}>
+              Buscar
+            </Button>
+          </Center>
+        </HStack>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+        {trazas.map((traza, k) => {
+          return (
+            <Box
+              key={k}
+              maxW="sm"
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              mb={4}
+            >
+              <Box p="6">
+                <Box display="flex" alignItems="baseline">
+                  <Badge borderRadius="full" px="2" colorScheme="teal">
+                    {traza.fecha.dia} {traza.fecha.hora}
+                  </Badge>
+                </Box>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+                <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight">
+                  {traza.estado}
+                </Box>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+                {traza.sucursal && traza.sucursal !== " " ? (
+                  <Tag>{traza.sucursal}</Tag>
+                ) : null}
 
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+                <Box display="flex" mt="2" alignItems="center">
+                  <Box as="span" ml="2" color="gray.600" fontSize="sm">
+                    Estado interno 🤔: {traza.evento}
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          );
+        })}
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
-  )
+  );
 }
