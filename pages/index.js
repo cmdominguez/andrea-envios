@@ -34,7 +34,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <HStack mb={4}>
-          <Center w="400px" h="40px">
+          <Center w="200px" h="40px">
             <Input
               placeholder="Numero de tracking"
               onChange={(e) => {
