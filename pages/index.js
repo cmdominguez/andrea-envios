@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Image from "next/image";
 import React from "react";
 import styles from "../styles/Home.module.css";
 import {
@@ -22,7 +21,6 @@ export default function Home() {
     if (response.ok) {
       const data = await response.json();
       setTrazas(data);
-      console.log(data);
     }
   }, [trackingNumber]);
 
@@ -36,11 +34,10 @@ export default function Home() {
 
       <main className={styles.main}>
         <HStack mb={4}>
-          <Center w="400px" h="40px" color="white">
+          <Center w="400px" h="40px">
             <Input
               placeholder="Numero de tracking"
               onChange={(e) => {
-                console.log(e.target.value);
                 setTrackingNumber(e.target.value);
               }}
             />
