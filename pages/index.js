@@ -61,13 +61,13 @@ export default function Home() {
           </Center>
         </HStack>
         {
-          1 ? <Spinner /> : null
+          loading ? <Spinner /> : null
         }
         {
-          1 ? 
+          error ? 
              <Alert status='error'>
                  <AlertIcon />
-                 There was an error processing your request
+                 Ups! Algo salio mal, dale a buscar otra vez.
              </Alert> : null
         }
         {trazas.map((traza, k) => {
