@@ -9,20 +9,32 @@ import {
   HStack,
   Input,
   Tag,
+  Spinner,
+  Alert,
+  AlertIcon
 } from "@chakra-ui/react";
 
 const url = "https://apidestinatarios.andreani.com/api/envios/";
 
 export default function Home() {
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(false);
   const [trackingNumber, setTrackingNumber] = React.useState("");
   const [trazas, setTrazas] = React.useState([]);
   const getShippingStatusTrace = React.useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    setTrazas([]);
     const response = await fetch(`${url}${trackingNumber}/trazas`);
+    setLoading(false);
     if (response.ok) {
       const data = await response.json();
+      setError(false)
       setTrazas(data);
+    } else {
+      setError(true)
     }
-  }, [trackingNumber]);
+  }, [trackingNumber, loading, error]);
 
   return (
     <div className={styles.container}>
@@ -48,7 +60,16 @@ export default function Home() {
             </Button>
           </Center>
         </HStack>
-
+        {
+          1 ? <Spinner /> : null
+        }
+        {
+          1 ? 
+             <Alert status='error'>
+                 <AlertIcon />
+                 There was an error processing your request
+             </Alert> : null
+        }
         {trazas.map((traza, k) => {
           return (
             <Box
